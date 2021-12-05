@@ -25,7 +25,7 @@ public class ZookeeperApp {
     final private static int TIME_OUT = 2500;
     final private static String LOCAL_HOST = "localhost";
     final private static String PORT = "8080";
-    
+    final private static String URL = "url";
     public static void main(String[] args) throws IOException, KeeperException, InterruptedException {
         BasicConfigurator.configure();
         ActorSystem system = ActorSystem.create("routes");
