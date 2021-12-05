@@ -8,7 +8,7 @@ import org.apache.zookeeper.ZooKeeper;
 import java.util.List;
 
 public class ZooServer implements Watcher {
-
+    final private static String SERVERS = "/servers";
     private ZooKeeper zoo;
 
 
