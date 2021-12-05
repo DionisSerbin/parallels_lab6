@@ -15,6 +15,12 @@ public class StorageActor extends AbstractActor {
         return receiveBuilder()
                 .match(StorageServer.class,
                         message -> this.servers = message.getServers())
+                .match(FollowingServer.class,
+                        message -> {
+                            this.servers.add(message.getUrl());
+                        }
+                )
                 .match()
+
     }
 }
