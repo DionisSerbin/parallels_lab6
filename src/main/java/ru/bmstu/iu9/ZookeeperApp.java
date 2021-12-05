@@ -26,6 +26,8 @@ public class ZookeeperApp {
         BasicConfigurator.configure();
         ActorSystem system = ActorSystem.create("routes");
         ActorRef storage = system.actorOf(Props.create(StorageActor.class));
+        final ActorMaterializer materializer = ActorMaterializer.create(system);
+        
     }
 
 }
