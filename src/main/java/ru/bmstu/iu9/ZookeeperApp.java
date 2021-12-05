@@ -28,18 +28,20 @@ public class ZookeeperApp {
     final private static String URL = "url";
     final private static String COUNT = "COUNT";
     final private static int TIME_OUT_SEC = 5;
-    
+
     public static void main(String[] args) throws IOException, KeeperException, InterruptedException {
         BasicConfigurator.configure();
         ActorSystem system = ActorSystem.create("routes");
         ActorRef storage = system.actorOf(Props.create(StorageActor.class));
         final ActorMaterializer materializer = ActorMaterializer.create(system);
+
         Watcher empty = new Watcher() {
             @Override
             public void process(WatchedEvent watchedEvent) {
             }
         };
 
+        
 
 
     }
