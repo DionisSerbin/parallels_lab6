@@ -4,6 +4,8 @@ import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 
+import java.util.List;
+
 public class ZooServer implements Watcher {
 
 
@@ -19,6 +21,6 @@ public class ZooServer implements Watcher {
     }
 
     private void sendServers() throws KeeperException, InterruptedException {
-        
+        List<String> servers = zoo.getChildren(SERVERS, this);
     }
 }
