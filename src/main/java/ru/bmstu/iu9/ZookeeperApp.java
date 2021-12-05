@@ -27,6 +27,8 @@ public class ZookeeperApp {
     final private static String PORT = "8080";
     final private static String URL = "url";
     final private static String COUNT = "COUNT";
+    final private static int TIME_OUT_SEC = 5;
+    
     public static void main(String[] args) throws IOException, KeeperException, InterruptedException {
         BasicConfigurator.configure();
         ActorSystem system = ActorSystem.create("routes");
