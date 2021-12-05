@@ -1,4 +1,11 @@
 package ru.bmstu.iu9;
 
-public class ZooServer {
+import org.apache.zookeeper.WatchedEvent;
+import org.apache.zookeeper.Watcher;
+
+public class ZooServer implements Watcher {
+    @Override
+    public void process(WatchedEvent watchedEvent) {
+
+    }
 }
