@@ -55,6 +55,8 @@ public class ZookeeperApp {
                 ConnectHttp.toHost(LOCAL_HOST, Integer.parseInt(PORT)),
                 materializer
         );
+
+        System.out.println("Server online at http://" + LOCAL_HOST + ":" + PORT);
     }
 
     private static Route createRoute(ActorRef storage, final Http http) {
