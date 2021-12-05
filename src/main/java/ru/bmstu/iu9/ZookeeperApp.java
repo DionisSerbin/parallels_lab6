@@ -45,6 +45,9 @@ public class ZookeeperApp {
         final Http http = Http.get(system);
         ZooServer zooServer = new ZooServer(zoo, storage);
         zooServer.createServer(LOCAL_HOST, PORT);
+
+        final Flow<HttpRequest, HttpResponse, NotUsed> flow = createRoute(storage, http)
+                .flow(system, materializer);
     }
 
 }
