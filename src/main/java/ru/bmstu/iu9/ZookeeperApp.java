@@ -57,6 +57,11 @@ public class ZookeeperApp {
         );
 
         System.out.println("Server online at http://" + LOCAL_HOST + ":" + PORT);
+
+        System.in.read();
+        binding
+                .thenCompose(ServerBinding::unbind)
+                .thenAccept(unbound -> system.terminate());
     }
 
     private static Route createRoute(ActorRef storage, final Http http) {
