@@ -25,7 +25,7 @@ public class ZookeeperApp {
     public static void main(String[] args) throws IOException, KeeperException, InterruptedException {
         BasicConfigurator.configure();
         ActorSystem system = ActorSystem.create("routes");
-        
+        ActorRef storage = system.actorOf(Props.create(StorageActor.class));
     }
 
 }
