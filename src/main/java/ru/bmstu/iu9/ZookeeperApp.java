@@ -21,13 +21,21 @@ import org.apache.zookeeper.ZooKeeper;
 import java.io.IOException;
 
 public class ZookeeperApp {
+    
 
     public static void main(String[] args) throws IOException, KeeperException, InterruptedException {
         BasicConfigurator.configure();
         ActorSystem system = ActorSystem.create("routes");
         ActorRef storage = system.actorOf(Props.create(StorageActor.class));
         final ActorMaterializer materializer = ActorMaterializer.create(system);
-        
+        Watcher empty = new Watcher() {
+            @Override
+            public void process(WatchedEvent watchedEvent) {
+            }
+        };
+
+
+
     }
 
 }
