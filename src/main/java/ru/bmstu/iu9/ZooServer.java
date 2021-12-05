@@ -18,6 +18,7 @@ public class ZooServer implements Watcher {
         }
     }
 
-    private void sendServers() {
+    private void sendServers() throws KeeperException, InterruptedException {
+        
     }
 }
