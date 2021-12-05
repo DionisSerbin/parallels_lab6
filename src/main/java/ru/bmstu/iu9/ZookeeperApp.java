@@ -23,6 +23,7 @@ import java.io.IOException;
 public class ZookeeperApp {
 
     public static void main(String[] args) throws IOException, KeeperException, InterruptedException {
+        BasicConfigurator.configure();
         
     }
 
