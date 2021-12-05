@@ -42,7 +42,7 @@ public class ZookeeperApp {
         };
 
         ZooKeeper zoo = new ZooKeeper(ZOO_HOST, TIME_OUT, empty);
-
+        final Http http = Http.get(system);
 
     }
 
