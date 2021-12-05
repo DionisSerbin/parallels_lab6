@@ -5,7 +5,7 @@ import org.apache.zookeeper.Watcher;
 
 public class ZooServer implements Watcher {
 
-    
+
 
     @Override
     public void process(WatchedEvent watchedEvent) {
