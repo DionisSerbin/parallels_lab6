@@ -80,6 +80,7 @@ public class ZookeeperApp {
         if (request.getCount() == 0) {
             return completeWithFuture(singleRequest(http, request.getUrl()));
         } else {
+            request.countMinus();
             
         }
     }
