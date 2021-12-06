@@ -19,6 +19,7 @@ import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooKeeper;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.concurrent.CompletionStage;
 
 import static akka.http.javadsl.server.Directives.*;
@@ -82,7 +83,7 @@ public class ZookeeperApp {
         } else {
             request.countMinus();
             return completeWithFuture(
-                    
+                    Patterns.ask(storage, new RandomServer(), Duration.ofSeconds(TIME_OUT_SEC))
         }
     }
 
