@@ -79,6 +79,8 @@ public class ZookeeperApp {
     private static Route check(ActorRef storage, final Http http,Request request) {
         if (request.getCount() == 0) {
             return completeWithFuture(singleRequest(http, request.getUrl()));
+        } else {
+            
         }
     }
 
