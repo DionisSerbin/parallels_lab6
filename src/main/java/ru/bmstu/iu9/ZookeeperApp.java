@@ -71,12 +71,14 @@ public class ZookeeperApp {
         return route(pathSingleSlash(() ->
                 parameter(URL, url ->
                         parameter(COUNT, count ->
-                                check(storage, http, new Request(url, count))
+                                check(storage, http, )
                         )
                 )
         ));
     }
 
-    
+    private static Route check(ActorRef storage, final Http http,Request request) {
+
+    }
 
 }
