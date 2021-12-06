@@ -85,6 +85,9 @@ public class ZookeeperApp {
             return completeWithFuture(
                     Patterns.ask(storage, new RandomServer(), Duration.ofSeconds(TIME_OUT_SEC))
                             .thenApply(req -> (String) req)
+                            .thenCompose(req -> {
+
+                            })
         }
     }
 
