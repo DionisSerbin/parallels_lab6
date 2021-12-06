@@ -71,14 +71,12 @@ public class ZookeeperApp {
         return route(pathSingleSlash(() ->
                 parameter(URL, url ->
                         parameter(COUNT, count ->
-                                check(storage, http, new ru.bmstu.iu9.Request(url, count))
+                                check(storage, http, new Request(url, count))
                         )
                 )
         ));
     }
 
-    private static Route check(ActorRef storage, final Http http, Request request) {
-
-    }
+    
 
 }
