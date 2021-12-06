@@ -1,6 +1,6 @@
 package ru.bmstu.iu9;
 
-public class Request extends org.omg.CORBA.Request {
+public class Request {
 
     private String url;
     private int count;
