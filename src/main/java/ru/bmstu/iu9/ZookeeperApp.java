@@ -74,7 +74,7 @@ public class ZookeeperApp {
     }
 
     private static Route check(ActorRef storage, final Http http, Request request) {
-        
+
     }
 
 }
