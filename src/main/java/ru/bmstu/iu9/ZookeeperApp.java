@@ -17,7 +17,6 @@ import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooKeeper;
-import org.omg.CORBA.Request;
 
 import java.io.IOException;
 import java.util.concurrent.CompletionStage;
@@ -71,7 +70,7 @@ public class ZookeeperApp {
         return route(pathSingleSlash(() ->
                 parameter(URL, url ->
                         parameter(COUNT, count ->
-                                check(storage, http, )
+                                check(storage, http, new Request(url, count))
                         )
                 )
         ));
