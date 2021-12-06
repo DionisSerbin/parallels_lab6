@@ -9,4 +9,10 @@ public class Request {
         this.url = url;
         this.count = Integer.parseInt(count);
     }
+
+    public String getUrl() {
+        return url;
+    }
+
+    
 }
