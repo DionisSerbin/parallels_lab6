@@ -69,6 +69,7 @@ public class ZookeeperApp {
     private static Route createRoute(ActorRef storage, final Http http) {
         return route(pathSingleSlash(() ->
                 parameter(URL, url ->
+                        parameter(COUNT, count ->
     }
 
 }
