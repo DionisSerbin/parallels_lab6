@@ -86,7 +86,9 @@ public class ZookeeperApp {
                     Patterns.ask(storage, new RandomServer(), Duration.ofSeconds(TIME_OUT_SEC))
                             .thenApply(req -> (String) req)
                             .thenCompose(req -> {
-
+                                String singleRequestURL = "https://" + req + "/?url=" +
+                                        request.getUrl() + "&count=" + request.getCount();
+                                
                             })
         }
     }
