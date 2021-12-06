@@ -21,8 +21,7 @@ import org.apache.zookeeper.ZooKeeper;
 import java.io.IOException;
 import java.util.concurrent.CompletionStage;
 
-import static akka.http.javadsl.server.Directives.pathSingleSlash;
-import static akka.http.javadsl.server.Directives.route;
+import static akka.http.javadsl.server.Directives.*;
 
 public class ZookeeperApp {
     final private static String ZOO_HOST = "127.0.0.1:2181";
@@ -69,7 +68,7 @@ public class ZookeeperApp {
 
     private static Route createRoute(ActorRef storage, final Http http) {
         return route(pathSingleSlash(() ->
-                
+                parameter(URL, url ->
     }
 
 }
