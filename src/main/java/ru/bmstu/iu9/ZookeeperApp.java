@@ -82,4 +82,8 @@ public class ZookeeperApp {
         }
     }
 
+    private static CompletionStage<HttpResponse> singleRequest(final Http http, String url) {
+        return http.singleRequest(HttpRequest.create(url));
+    }
+
 }
