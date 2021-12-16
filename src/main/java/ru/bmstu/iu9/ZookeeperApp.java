@@ -28,9 +28,9 @@ public class ZookeeperApp {
     final private static String ZOO_HOST = "127.0.0.1:2181";
     final private static int TIME_OUT = 2500;
     final private static String LOCAL_HOST = "localhost";
-    final private static String PORT = "8080";
+    final private static String PORT = "8000";
     final private static String URL = "url";
-    final private static String COUNT = "COUNT";
+    final private static String COUNT = "count";
     final private static int TIME_OUT_SEC = 5;
 
     public static void main(String[] args) throws IOException, KeeperException, InterruptedException {
