@@ -14,12 +14,12 @@ import akka.stream.ActorMaterializer;
 import akka.stream.javadsl.Flow;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.zookeeper.KeeperException;
-import org.apache.zookeeper.WatchedEvent;
-import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooKeeper;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletionStage;
 
 import static akka.http.javadsl.server.Directives.*;
@@ -34,7 +34,10 @@ public class ZookeeperApp {
     final private static String URL = "url";
     final private static String COUNT = "count";
     final private static int TIME_OUT_SEC = 5;
-    private static final int ARGS = 2;
+    private static final int INDEX_OF_ZOOKEEPER_ADDRESS = 0;
+    private static final int ZOOKEEPER_TIMEOUT = 3000;
+    private static final int NO_SERVERS_RUNNING = 0;
+    private static final String ERROR = "NO SERVERS ARE RUNNING";
 
     public static void main(String[] args) throws IOException, KeeperException, InterruptedException {
         BasicConfigurator.configure();
@@ -42,64 +45,57 @@ public class ZookeeperApp {
         ActorRef storage = system.actorOf(Props.create(StorageActor.class));
         final ActorMaterializer materializer = ActorMaterializer.create(system);
 
-        Watcher empty = new Watcher() {
-            @Override
-            public void process(WatchedEvent watchedEvent) {
-            }
-        };
-
-        ZooKeeper zoo = new ZooKeeper(ZOO_HOST, TIME_OUT, empty);
         final Http http = Http.get(system);
-        ZooServer zooServer = new ZooServer(zoo, storage);
-        zooServer.createServer(LOCAL_HOST, PORT);
+        ZooKeeper zk = null;
 
-        final Flow<HttpRequest, HttpResponse, NotUsed> flow = createRoute(storage, http)
-                .flow(system, materializer);
-
-        final CompletionStage<ServerBinding> binding = http.bindAndHandle(
-                flow,
-                ConnectHttp.toHost(LOCAL_HOST, Integer.parseInt(PORT)),
-                materializer
-        );
-
-        System.out.println("Server online at http://" + LOCAL_HOST + ":" + PORT);
-
-        System.in.read();
-        binding
-                .thenCompose(ServerBinding::unbind)
-                .thenAccept(unbound -> system.terminate());
-    }
-
-    private static Route createRoute(ActorRef storage, final Http http) {
-        return route(pathSingleSlash(() ->
-                parameter(URL, url ->
-                        parameter(COUNT, count ->
-                                check(storage, http, new Request(url, count))
-                        )
-                )
-        ));
-    }
-
-    private static Route check(ActorRef storage, final Http http,Request request) {
-        if (request.getCount() == 0) {
-            return completeWithFuture(singleRequest(http, request.getUrl()));
-        } else {
-            request.countMinus();
-            return completeWithFuture(
-                    Patterns.ask(storage, new RandomServer(), Duration.ofSeconds(TIME_OUT_SEC))
-                            .thenApply(req -> (String) req)
-                            .thenCompose(req -> {
-                                String singleRequestURL = "https://" + req + "/?url=" +
-                                        request.getUrl() + "&count=" + request.getCount();
-                                return singleRequest(http, singleRequestURL);
-                            })
-            );
+        try {
+            zk = new ZooKeeper(args[INDEX_OF_ZOOKEEPER_ADDRESS], ZOOKEEPER_TIMEOUT, null);
+            new ZooWatcher(zk, storage);
+        } catch (InterruptedException | KeeperException e) {
+            e.printStackTrace();
+            System.exit(-1);
         }
+
+        List<CompletionStage<ServerBinding>> bindings = new ArrayList<>();
+
+        StringBuilder serversInfo = new StringBuilder("Servers online at\n");
+
+        for (int i = 1; i < args.length; i++) {
+            try {
+                StorageServer server = new StorageServer(http, storage, zk, args[i]);
+                final Flow<HttpRequest, HttpResponse, NotUsed> routeFlow = server.createRoute().flow(system, materializer);
+                bindings.add(http.bindAndHandle(
+                        routeFlow,
+                        ConnectHttp.toHost(LOCAL_HOST, Integer.parseInt(args[i])),
+                        materializer
+                ));
+                serversInfo.append("http://localhost:").append(args[i]).append("/\n");
+            } catch (InterruptedException | KeeperException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if(bindings.size() == NO_SERVERS_RUNNING) {
+            System.err.println(ERROR);
+        }
+
+        print(serversInfo + "\nPress RETURN to stop...");
+
+        try {
+            System.in.read();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(-1);
+        }
+
+        for (CompletionStage<ServerBinding> binding : bindings) {
+            binding
+                    .thenCompose(ServerBinding::unbind)
+                    .thenAccept(unbound -> system.terminate());
+        }
+
     }
 
-    private static CompletionStage<HttpResponse> singleRequest(final Http http, String url) {
-        return http.singleRequest(HttpRequest.create(url));
-    }
 
     public static void print(String s) {
         System.out.println(GREEN + s + RESET);

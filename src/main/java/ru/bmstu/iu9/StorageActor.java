@@ -1,6 +1,7 @@
 package ru.bmstu.iu9;
 
 import akka.actor.AbstractActor;
+import akka.actor.Actor;
 import akka.actor.ActorRef;
 
 import java.util.ArrayList;
@@ -22,20 +23,13 @@ public class StorageActor extends AbstractActor {
     @Override
     public Receive createReceive() {
         return receiveBuilder()
-                .match(StorageServer.class,
-                        message -> this.servers = message.getServers())
-                .match(FollowingServer.class,
-                        message -> {
-                            this.servers.add(message.getUrl());
-                        }
+                .match(StorageServer.MessageRandomServerUrl.class,
+                        message -> sender().tell(getRandomServer(),
+                        Actor.noSender()
+                        )
                 )
-                .match(RandomServer.class,
-                        message -> {
-                            getSender().tell(
-                                    this.getRandomServer(),
-                                    ActorRef.noSender()
-                            );
-                        }
+                .match(ZooWatcher.MessageServersList.class,
+                        message -> servers = message.getServers()
                 )
                 .build();
 

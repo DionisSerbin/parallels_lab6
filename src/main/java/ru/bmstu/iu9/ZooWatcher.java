@@ -3,15 +3,16 @@ package ru.bmstu.iu9;
 import akka.actor.ActorRef;
 import org.apache.zookeeper.*;
 
-import java.nio.charset.StandardCharsets;
+
+import java.util.ArrayList;
 import java.util.List;
 
-public class ZooServer implements Watcher {
+public class ZooWatcher implements Watcher {
     final private static String SERVERS = "/servers";
     private ZooKeeper zoo;
     private ActorRef storage;
 
-    public ZooServer(ZooKeeper zoo, ActorRef storage) throws KeeperException, InterruptedException {
+    public ZooWatcher(ZooKeeper zoo, ActorRef storage) throws KeeperException, InterruptedException {
         this.zoo = zoo;
         this.storage = storage;
         sendServers();
@@ -19,8 +20,8 @@ public class ZooServer implements Watcher {
 
     @Override
     public void process(WatchedEvent watchedEvent) {
-        System.out.println(watchedEvent.toString());
         try {
+            zoo.getChildren(SERVERS, this);
             sendServers();
         } catch (KeeperException | InterruptedException e) {
             e.printStackTrace();
@@ -28,23 +29,25 @@ public class ZooServer implements Watcher {
     }
 
     private void sendServers() throws KeeperException, InterruptedException {
-        List<String> servers = zoo.getChildren(SERVERS, this);
+        List<String> servers = new ArrayList<>();
+        for (String s : zoo.getChildren(SERVERS, this)) {
+            servers.add(new String(zoo.getData(SERVERS + "/" + s, false, null)));
+        }
         storage.tell(
-                new StorageServer(servers),
+                new MessageServersList(servers),
                 ActorRef.noSender()
         );
     }
 
-    public void createServer(String localhost, String port) throws KeeperException, InterruptedException {
-        zoo.create(
-                SERVERS + "/" + localhost + ":" + port,
-                port.getBytes(StandardCharsets.UTF_8),
-                ZooDefs.Ids.OPEN_ACL_UNSAFE,
-                CreateMode.EPHEMERAL
-        );
-        storage.tell(
-                new FollowingServer(localhost + ":" + port),
-                ActorRef.noSender()
-        );
+    static class MessageServersList {
+        private final List<String> servers;
+
+        MessageServersList(List<String> servers){
+            this.servers = servers;
+        }
+
+        public List<String> getServers() {
+            return servers;
+        }
     }
 }
