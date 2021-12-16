@@ -25,6 +25,8 @@ import java.util.concurrent.CompletionStage;
 import static akka.http.javadsl.server.Directives.*;
 
 public class ZookeeperApp {
+    public static final String GREEN = "\u001B[32m";
+    public static final String RESET = "\u001B[0m";
     final private static String ZOO_HOST = "127.0.0.1:2181";
     final private static int TIME_OUT = 2500;
     final private static String LOCAL_HOST = "localhost";
@@ -32,6 +34,7 @@ public class ZookeeperApp {
     final private static String URL = "url";
     final private static String COUNT = "count";
     final private static int TIME_OUT_SEC = 5;
+    private static final int ARGS = 2;
 
     public static void main(String[] args) throws IOException, KeeperException, InterruptedException {
         BasicConfigurator.configure();
@@ -96,6 +99,10 @@ public class ZookeeperApp {
 
     private static CompletionStage<HttpResponse> singleRequest(final Http http, String url) {
         return http.singleRequest(HttpRequest.create(url));
+    }
+
+    public static void print(String s) {
+        System.out.println(GREEN + s + RESET);
     }
 
 }
